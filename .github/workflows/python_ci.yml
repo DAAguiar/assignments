@@ -25,10 +25,10 @@ jobs:
           pip install pytest-cov pylint toml
           pip install -e '.'
 
-      - name: Run pytest
-        run: |
-          pytest life_expectancy --cov
-
       - name: Run pylint
         run: |
           pylint pylint life_expectancy.cleaning
+
+      - name: Run pytest
+        run: |
+          pytest life_expectancy --cov
