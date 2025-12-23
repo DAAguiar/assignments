@@ -4,10 +4,11 @@
 # pylint: disable=trailing-whitespace
 # pylint: disable=too-few-public-methods
 # pylint: disable=protected-access
+import argparse
+
 from pandas import DataFrame, read_csv, melt
 from numpy import nan
 
-import argparse
 
 
 class DataOperations():
