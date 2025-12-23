@@ -9,8 +9,6 @@ import argparse
 from pandas import DataFrame, read_csv, melt
 from numpy import nan
 
-
-
 class DataOperations():
     '''
     Docstring for DataOperations
