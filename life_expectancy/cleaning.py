@@ -12,6 +12,7 @@ from numpy import nan
 class DataOperations():
     '''
     Docstring for DataOperations
+    smth smh
     '''
 
     IMPORT_FILE_PATH = './life_expectancy/data/eu_life_expectancy_raw.tsv'
