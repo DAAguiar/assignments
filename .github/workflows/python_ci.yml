@@ -27,7 +27,7 @@ jobs:
 
       - name: Run pylint
         run: |
-          pylint pylint life_expectancy.cleaning
+          pylint life_expectancy.cleaning
 
       - name: Run pytest
         run: |
