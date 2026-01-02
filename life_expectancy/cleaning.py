@@ -94,6 +94,7 @@ def write_data(data_operations: LifeExpectancyOperations,
     '''Write cleaned data to CSV file.'''
     data_operations._write_dataframe(df, country_code.upper())
 
+
 def life_expectancy_orchestration(country_code: str = 'PT') -> DataFrame:
     '''Performs whole orchestrantion pipeline for life_expectancy data.'''
     lifeExpectancyOperations = LifeExpectancyOperations() # pylint: disable=invalid-name
@@ -110,21 +111,8 @@ def life_expectancy_orchestration(country_code: str = 'PT') -> DataFrame:
 
 if __name__ == "__main__":
     # pragma: no cover
-
     parser = argparse.ArgumentParser()
     parser.add_argument("country_code", help = 'country code', nargs="?", type=str, default='PT')
     args = parser.parse_args()
 
     life_expectancy_orchestration(country_code=args.country_code)
-
-    # lifeExpectancyOperations = LifeExpectancyOperations() # pylint: disable=invalid-name
-
-
-
-    # df_life_expectancy = load_data(lifeExpectancyOperations)
-
-    # df_life_expectancy_country_clean = clean_data(lifeExpectancyOperations,
-    #                                               df_life_expectancy,
-    #                                               args.country_code)
-    
-    # write_data(lifeExpectancyOperations,df_life_expectancy,args.country_code)
