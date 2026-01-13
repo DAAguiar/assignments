@@ -47,10 +47,6 @@ class LifeExpectancyOperations():
         df['value'] = df['value'].astype("float")
         return df 
 
-    def _remove_nan(self, df: DataFrame) -> DataFrame:
-        '''Remove rows containing missing values.'''
-        return df.dropna()
-
     def _clean_data(self, df: DataFrame) -> DataFrame:
         '''Apply all cleaning transformations to the raw data.'''
         columns = df.columns
@@ -95,7 +91,7 @@ def write_data(data_operations: LifeExpectancyOperations,
     data_operations._write_dataframe(df, country_code.upper())
 
 
-def life_expectancy_orchestration(country_code: str = 'PT') -> DataFrame:
+def life_expectancy_orchestration(country_code: str = 'PT') -> None:
     '''Performs whole orchestrantion pipeline for life_expectancy data.'''
     lifeExpectancyOperations = LifeExpectancyOperations() # pylint: disable=invalid-name
 
