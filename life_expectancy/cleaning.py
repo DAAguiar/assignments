@@ -91,7 +91,7 @@ def write_data(data_operations: LifeExpectancyOperations,
     data_operations._write_dataframe(df, country_code.upper())
 
 
-def life_expectancy_orchestration(country_code: str = 'PT') -> None:
+def life_expectancy_orchestration(country_code: str = 'PT') -> DataFrame:
     '''Performs whole orchestrantion pipeline for life_expectancy data.'''
     lifeExpectancyOperations = LifeExpectancyOperations() # pylint: disable=invalid-name
 
