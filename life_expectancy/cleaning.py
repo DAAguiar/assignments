@@ -104,6 +104,8 @@ def life_expectancy_orchestration(country_code: str = 'PT') -> None:
     write_data(lifeExpectancyOperations,
                df_life_expectancy_country_clean,
                country_code)
+    
+    return df_life_expectancy_country_clean
 
 if __name__ == "__main__":
     # pragma: no cover
