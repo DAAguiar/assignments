@@ -28,3 +28,10 @@ fail_under = 80
 
 [tool.setuptools]
 packages = ["life_expectancy"]
+
+[tool.pylint."message_control"]
+disable = [
+    "trailing-whitespace",
+    "missing-function-docstring",
+    "invalid-name"
+]

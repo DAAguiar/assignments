@@ -6,6 +6,8 @@ from life_expectancy.data_io import load_data
 
 from . import FIXTURES_DIR
 
+# pylint: disable=trailing-whitespace
+
 
 @pytest.fixture(scope="session")
 def pt_life_expectancy_expected() -> pd.DataFrame:
