@@ -24,9 +24,7 @@ from life_expectancy.cleaning import LifeExpectancyOperations
 
 from . import PROJECT_DIR
 
-# pylint: disable=trailing-whitespace
-# pylint: disable=too-few-public-methods
-# pylint: disable=protected-access
+# pylint: disable=redefined-outer-name
 
 def test_dependencies():
     """Test that the get_versions function return 4 values."""
