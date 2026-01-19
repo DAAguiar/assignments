@@ -1,6 +1,6 @@
 from pandas import read_csv
 
-# pylint: disable-allç
+# pylint: disable-all
 
 if __name__ == "__main__":
     df = read_csv(
