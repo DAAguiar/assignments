@@ -1,5 +1,7 @@
 from pandas import read_csv
 
+# pylint: disable-allç
+
 if __name__ == "__main__":
     df = read_csv(
         "./life_expectancy/data/eu_life_expectancy_raw.tsv", sep="\t", header=0
