@@ -1,3 +1,6 @@
+'''
+    Module to handle full data orchestration 
+'''
 import argparse
 
 from pandas import DataFrame

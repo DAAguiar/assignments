@@ -33,5 +33,7 @@ packages = ["life_expectancy"]
 disable = [
     "trailing-whitespace",
     "missing-function-docstring",
-    "invalid-name"
+    "invalid-name",
+    "trailing-newlines",
+    "missing-final-newline"
 ]

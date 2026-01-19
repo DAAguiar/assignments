@@ -19,6 +19,7 @@ import toml
 from pkg_resources import DistributionNotFound, get_distribution
 
 from life_expectancy.data_io import OUTPUT_FILE_PATH, write_data, load_data
+from life_expectancy.full_orchestration import life_expectancy_orchestration
 from life_expectancy.cleaning import LifeExpectancyOperations
 
 from . import PROJECT_DIR
@@ -94,7 +95,6 @@ def test_write_data():
 @patch("life_expectancy.full_orchestration.LifeExpectancyOperations")
 @patch("life_expectancy.full_orchestration.load_data")
 def test_life_expectancy_orchestration(mock_load_data, mock_life_exp_ops):
-    from life_expectancy.full_orchestration import life_expectancy_orchestration
 
     input_file_path = "./test_path.tsv"
 
