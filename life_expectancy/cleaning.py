@@ -15,12 +15,12 @@ class LifeExpectancyOperations():
     IMPORT_FILE_PATH = './life_expectancy/data/eu_life_expectancy_raw.tsv'
     OUTPUT_FILE_PATH = './life_expectancy/data/{}_life_expectancy.csv'
     
-    def __init__(self):
-        pass
+    def __init__(self, input_file_path = None):
+        self.input_file_path = input_file_path or self.IMPORT_FILE_PATH
 
     def _load_data(self) -> DataFrame :
         '''Load raw life expectancy data from TSV file.'''
-        return read_csv(self.IMPORT_FILE_PATH, sep='\t', header=0)
+        return read_csv(self.input_file_path, sep='\t', header=0)
     
     def _unpivot_years(self, df: DataFrame, year_columns: str, variable_columns: str):
         '''Transform year columns into rows.'''
@@ -91,15 +91,20 @@ def write_data(data_operations: LifeExpectancyOperations,
     data_operations._write_dataframe(df, country_code.upper())
 
 
-def life_expectancy_orchestration(country_code: str = 'PT') -> DataFrame:
+def life_expectancy_orchestration(country_code: str = 'PT',
+                                  input_file_path = None) -> DataFrame:
     '''Performs whole orchestrantion pipeline for life_expectancy data.'''
-    lifeExpectancyOperations = LifeExpectancyOperations() # pylint: disable=invalid-name
+    lifeExpectancyOperations = LifeExpectancyOperations(input_file_path=input_file_path) # pylint: disable=invalid-name
 
     df_life_expectancy = load_data(lifeExpectancyOperations)
 
     df_life_expectancy_country_clean = clean_data(lifeExpectancyOperations,
                                                   df_life_expectancy,
                                                   country_code)
+    
+    df_life_expectancy_country_clean = df_life_expectancy_country_clean.reset_index(
+        drop=True
+    )
     
     write_data(lifeExpectancyOperations,
                df_life_expectancy_country_clean,
