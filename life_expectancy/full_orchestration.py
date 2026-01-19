@@ -5,6 +5,10 @@ from pandas import DataFrame
 from life_expectancy.cleaning import LifeExpectancyOperations
 from life_expectancy.data_io import load_data
 
+# pylint: disable=trailing-whitespace
+# pylint: disable=too-few-public-methods
+# pylint: disable=protected-access
+
 IMPORT_FILE_PATH = './life_expectancy/data/eu_life_expectancy_raw.tsv'
 
 def life_expectancy_orchestration(country_code: str = 'PT',

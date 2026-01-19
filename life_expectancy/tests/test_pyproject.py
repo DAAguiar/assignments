@@ -8,20 +8,24 @@ Once you have ensured that the package and its dependencies are installed,
 feel free to delete this file.
 """
 
-from pkg_resources import DistributionNotFound, get_distribution
-from unittest.mock import patch
 from unittest import mock
+from unittest.mock import patch
 
-
-import toml
-import pytest
-import pylint
-import pytest_cov
 import pandas as pd
+import pylint
+import pytest
+import pytest_cov
+import toml
+from pkg_resources import DistributionNotFound, get_distribution
+
+from life_expectancy.data_io import OUTPUT_FILE_PATH, write_data, load_data
+from life_expectancy.cleaning import LifeExpectancyOperations
 
 from . import PROJECT_DIR
 
-from life_expectancy.cleaning import LifeExpectancyOperations
+# pylint: disable=trailing-whitespace
+# pylint: disable=too-few-public-methods
+# pylint: disable=protected-access
 
 def test_dependencies():
     """Test that the get_versions function return 4 values."""
@@ -71,16 +75,12 @@ def test_package():
 
 @patch("life_expectancy.data_io.read_csv")
 def test_load_data(mock_read_csv: mock):
-    from life_expectancy.data_io import load_data
-
     input_str = "./life_expectancy/data/eu_life_expectancy_raw.tsv"
     _ = load_data(input_str)
     mock_read_csv.assert_called_once_with(input_str, sep="\t", header=0)
 
 
 def test_write_data():
-    from life_expectancy.data_io import OUTPUT_FILE_PATH, write_data
-
     output_path = OUTPUT_FILE_PATH.format("pt")
 
     with patch.object(pd.DataFrame, "to_csv", return_value=None) as mock_write_csv:
@@ -123,26 +123,32 @@ def test_clean_and_filter_region(raw_df, expected_filtered_df):
     pd.testing.assert_frame_equal(df_filtered, expected_filtered_df)
 
 
-@patch.object(LifeExpectancyOperations, '_clean_data')
+@patch.object(LifeExpectancyOperations, "_clean_data")
 def test_filter_region_unit(mock_clean_data):
-    
-    mock_cleaned_df = pd.DataFrame([
-        ["YR", "F", "Y65", "PT", 2020, 21.0],
-        ["YR", "F", "Y65", "BE", 2020, 22.2],
-        ["YR", "F", "Y65", "PT", 2021, 21.2],
-    ], columns=["unit", "sex", "age", "region", "year", "value"])
-    
+    mock_cleaned_df = pd.DataFrame(
+        [
+            ["YR", "F", "Y65", "PT", 2020, 21.0],
+            ["YR", "F", "Y65", "BE", 2020, 22.2],
+            ["YR", "F", "Y65", "PT", 2021, 21.2],
+        ],
+        columns=["unit", "sex", "age", "region", "year", "value"],
+    )
+
     mock_clean_data.return_value = mock_cleaned_df
-    
-    ops = LifeExpectancyOperations(pd.DataFrame()) 
-    result = ops.filter_region(country_code='PT')
-    
-    expected = pd.DataFrame([
-        ["YR", "F", "Y65", "PT", 2020, 21.0],
-        ["YR", "F", "Y65", "PT", 2021, 21.2],
-    ], columns=["unit", "sex", "age", "region", "year", "value"]).reset_index(drop=True)
-    
+
+    ops = LifeExpectancyOperations(pd.DataFrame())
+    result = ops.filter_region(country_code="PT")
+
+    expected = pd.DataFrame(
+        [
+            ["YR", "F", "Y65", "PT", 2020, 21.0],
+            ["YR", "F", "Y65", "PT", 2021, 21.2],
+        ],
+        columns=["unit", "sex", "age", "region", "year", "value"],
+    ).reset_index(drop=True)
+
     pd.testing.assert_frame_equal(result, expected)
+
 
 @pytest.fixture()
 def raw_df():
