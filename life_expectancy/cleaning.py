@@ -1,18 +1,17 @@
 '''
     Module to import and clean eu_life_expectancy_raw
 '''
-# pylint: disable=trailing-whitespace
-# pylint: disable=too-few-public-methods
+
 # pylint: disable=protected-access
 
-from pandas import DataFrame, melt
 from numpy import nan
+from pandas import DataFrame, melt
+
 
 class LifeExpectancyOperations():
     '''Class to handle life expectancy data loading, cleaning, and saving operations.'''
 
-    # IMPORT_FILE_PATH = './life_expectancy/data/eu_life_expectancy_raw.tsv'
-    # OUTPUT_FILE_PATH = './life_expectancy/data/{}_life_expectancy.csv'
+    # pylint: disable=too-few-public-methods
     
     def __init__(self, raw_df: DataFrame):
         self.raw_df = raw_df

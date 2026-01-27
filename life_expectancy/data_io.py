@@ -1,9 +1,7 @@
 '''
     Module to handle DataFrame input/ouput
 '''
-# pylint: disable=trailing-whitespace
-# pylint: disable=too-few-public-methods
-# pylint: disable=protected-access
+
 from pandas import DataFrame, read_csv
 
 OUTPUT_FILE_PATH = './life_expectancy/data/{}_life_expectancy.csv'
