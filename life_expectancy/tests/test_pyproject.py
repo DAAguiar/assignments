@@ -122,30 +122,13 @@ def test_clean_and_filter_region(raw_df, expected_filtered_df):
 
 
 @patch.object(LifeExpectancyOperations, "_clean_data")
-def test_filter_region_unit(mock_clean_data):
-    mock_cleaned_df = pd.DataFrame(
-        [
-            ["YR", "F", "Y65", "PT", 2020, 21.0],
-            ["YR", "F", "Y65", "BE", 2020, 22.2],
-            ["YR", "F", "Y65", "PT", 2021, 21.2],
-        ],
-        columns=["unit", "sex", "age", "region", "year", "value"],
-    )
-
-    mock_clean_data.return_value = mock_cleaned_df
+def test_filter_region_unit(mock_clean_data, expected_cleaned_df, expected_filtered_df):
+    mock_clean_data.return_value = expected_cleaned_df
 
     ops = LifeExpectancyOperations(pd.DataFrame())
     result = ops.filter_region(country_code="PT")
 
-    expected = pd.DataFrame(
-        [
-            ["YR", "F", "Y65", "PT", 2020, 21.0],
-            ["YR", "F", "Y65", "PT", 2021, 21.2],
-        ],
-        columns=["unit", "sex", "age", "region", "year", "value"],
-    ).reset_index(drop=True)
-
-    pd.testing.assert_frame_equal(result, expected)
+    pd.testing.assert_frame_equal(result, expected_filtered_df)
 
 
 @pytest.fixture()
@@ -157,6 +140,17 @@ def raw_df():
     ]
     return pd.DataFrame(data, columns=["unit,sex,age,geo\time", "2020", "2021"])
 
+
+@pytest.fixture()
+def expected_cleaned_df():
+    return pd.DataFrame(
+        [
+            ["YR", "F", "Y65", "PT", 2020, 21.0],
+            ["YR", "F", "Y65", "BE", 2020, 22.2],
+            ["YR", "F", "Y65", "PT", 2021, 21.2],
+        ],
+        columns=["unit", "sex", "age", "region", "year", "value"],
+    )
 
 @pytest.fixture()
 def expected_filtered_df():
