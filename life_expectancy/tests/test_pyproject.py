@@ -7,16 +7,24 @@ since we are learning, this is a special case.
 Once you have ensured that the package and its dependencies are installed,
 feel free to delete this file.
 """
+
+from unittest import mock
+from unittest.mock import patch
+
+import pandas as pd
+import pylint
+import pytest
+import pytest_cov
+import toml
 from pkg_resources import DistributionNotFound, get_distribution
 
-import toml
-import pytest
-import pylint
-import pytest_cov
-import pandas as pd
+from life_expectancy.data_io import OUTPUT_FILE_PATH, write_data, load_data
+from life_expectancy.full_orchestration import life_expectancy_orchestration
+from life_expectancy.cleaning import LifeExpectancyOperations
 
 from . import PROJECT_DIR
 
+# pylint: disable=redefined-outer-name
 
 def test_dependencies():
     """Test that the get_versions function return 4 values."""
@@ -24,7 +32,7 @@ def test_dependencies():
         pd.__version__,
         pytest.__version__,
         pytest_cov.__version__,
-        pylint.__version__
+        pylint.__version__,
     )
     assert len(deps) == 4
 
@@ -62,3 +70,92 @@ def test_package():
         "that the version of the package in the pyproject.toml file "
         "is `0.1.0`."
     )
+
+
+@patch("life_expectancy.data_io.read_csv")
+def test_load_data(mock_read_csv: mock):
+    input_str = "./life_expectancy/data/eu_life_expectancy_raw.tsv"
+    _ = load_data(input_str)
+    mock_read_csv.assert_called_once_with(input_str, sep="\t", header=0)
+
+
+def test_write_data():
+    output_path = OUTPUT_FILE_PATH.format("pt")
+
+    with patch.object(pd.DataFrame, "to_csv", return_value=None) as mock_write_csv:
+        df = pd.DataFrame()
+
+        write_data(df)
+
+    mock_write_csv.assert_called_once_with(output_path)
+
+
+@patch("life_expectancy.full_orchestration.LifeExpectancyOperations")
+@patch("life_expectancy.full_orchestration.load_data")
+def test_life_expectancy_orchestration(mock_load_data, mock_life_exp_ops):
+
+    input_file_path = "./test_path.tsv"
+
+    mock_df_raw = pd.DataFrame({"col": [1, 2, 3]})
+    mock_df_filtered = pd.DataFrame({"col": [1]})
+
+    mock_load_data.return_value = mock_df_raw
+    mock_instance = mock_life_exp_ops.return_value
+    mock_instance.filter_region.return_value = mock_df_filtered
+
+    result = life_expectancy_orchestration(
+        country_code="PT", input_file_path=input_file_path
+    )
+
+    mock_load_data.assert_called_once_with(input_file_path)
+    mock_life_exp_ops.assert_called_once_with(raw_df=mock_df_raw)
+    mock_instance.filter_region.assert_called_once_with(country_code="PT")
+    assert result.equals(mock_df_filtered)
+
+
+def test_clean_and_filter_region(raw_df, expected_filtered_df):
+    lifeExpectancyOperations = LifeExpectancyOperations(raw_df)
+
+    df_filtered = lifeExpectancyOperations.filter_region(country_code="PT")
+
+    pd.testing.assert_frame_equal(df_filtered, expected_filtered_df)
+
+
+@patch.object(LifeExpectancyOperations, "_clean_data")
+def test_filter_region_unit(mock_clean_data, expected_cleaned_df, expected_filtered_df):
+    mock_clean_data.return_value = expected_cleaned_df
+
+    ops = LifeExpectancyOperations(pd.DataFrame())
+    result = ops.filter_region(country_code="PT")
+
+    pd.testing.assert_frame_equal(result, expected_filtered_df)
+
+
+@pytest.fixture()
+def raw_df():
+    data = [
+        ["YR,F,Y65,PT", "21.0", "21.2"],
+        ["YR,F,Y65,BE", "22.2", "15.6"],
+        ["YR,F,Y65,CH", ":", "23.1"],
+    ]
+    return pd.DataFrame(data, columns=["unit,sex,age,geo\time", "2020", "2021"])
+
+
+@pytest.fixture()
+def expected_cleaned_df():
+    return pd.DataFrame(
+        [
+            ["YR", "F", "Y65", "PT", 2020, 21.0],
+            ["YR", "F", "Y65", "BE", 2020, 22.2],
+            ["YR", "F", "Y65", "PT", 2021, 21.2],
+        ],
+        columns=["unit", "sex", "age", "region", "year", "value"],
+    )
+
+@pytest.fixture()
+def expected_filtered_df():
+    data = [["YR", "F", "Y65", "PT", 2020, 21.0], ["YR", "F", "Y65", "PT", 2021, 21.2]]
+
+    return pd.DataFrame(
+        data, columns=["unit", "sex", "age", "region", "year", "value"]
+    ).reset_index(drop=True)
