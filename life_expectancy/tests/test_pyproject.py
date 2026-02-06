@@ -21,10 +21,13 @@ from pkg_resources import DistributionNotFound, get_distribution
 from life_expectancy.data_io import OUTPUT_FILE_PATH, write_data, load_data
 from life_expectancy.full_orchestration import life_expectancy_orchestration
 from life_expectancy.cleaning import LifeExpectancyOperations
+from life_expectancy.countries import Region
+
 
 from . import PROJECT_DIR
 
 # pylint: disable=redefined-outer-name
+
 
 def test_dependencies():
     """Test that the get_versions function return 4 values."""
@@ -71,6 +74,12 @@ def test_package():
         "is `0.1.0`."
     )
 
+def test_fetch_valid_countries():
+    country_code = Region['DK']
+
+    valid_countries = country_code.fetch_valid_countries()
+
+    assert all(len(x.name) <= 2 for x in valid_countries)
 
 @patch("life_expectancy.data_io.read_csv")
 def test_load_data(mock_read_csv: mock):

@@ -35,5 +35,6 @@ disable = [
     "missing-function-docstring",
     "invalid-name",
     "trailing-newlines",
-    "missing-final-newline"
+    "missing-final-newline",
+    "no-else-return"
 ]
