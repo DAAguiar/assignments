@@ -111,21 +111,25 @@ def test_life_expectancy_orchestration(mock_load_data, mock_life_exp_ops):
     mock_load_data.return_value = mock_df_raw
     mock_instance = mock_life_exp_ops.return_value
     mock_instance.filter_region.return_value = mock_df_filtered
-
+    
+    region = Region["PT"]
+    
     result = life_expectancy_orchestration(
-        country_code="PT", input_file_path=input_file_path
+        country_code=region, input_file_path=input_file_path
     )
 
     mock_load_data.assert_called_once_with(input_file_path)
     mock_life_exp_ops.assert_called_once_with(raw_df=mock_df_raw)
-    mock_instance.filter_region.assert_called_once_with(country_code="PT")
+    mock_instance.filter_region.assert_called_once_with(region)
     assert result.equals(mock_df_filtered)
 
 
 def test_clean_and_filter_region(raw_df, expected_filtered_df):
     lifeExpectancyOperations = LifeExpectancyOperations(raw_df)
 
-    df_filtered = lifeExpectancyOperations.filter_region(country_code="PT")
+    region = Region["PT"]
+
+    df_filtered = lifeExpectancyOperations.filter_region(country_code=region)
 
     pd.testing.assert_frame_equal(df_filtered, expected_filtered_df)
 
@@ -134,8 +138,10 @@ def test_clean_and_filter_region(raw_df, expected_filtered_df):
 def test_filter_region_unit(mock_clean_data, expected_cleaned_df, expected_filtered_df):
     mock_clean_data.return_value = expected_cleaned_df
 
+    region = Region["PT"]
+
     ops = LifeExpectancyOperations(pd.DataFrame())
-    result = ops.filter_region(country_code="PT")
+    result = ops.filter_region(country_code=region)
 
     pd.testing.assert_frame_equal(result, expected_filtered_df)
 

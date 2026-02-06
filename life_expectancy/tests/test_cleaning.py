@@ -2,6 +2,7 @@
 import pandas as pd
 
 from life_expectancy.cleaning import LifeExpectancyOperations
+from life_expectancy.countries import Region
 
 def test_clean_data(pt_life_expectancy_expected: pd.DataFrame,
                     pt_life_expectancy_raw: pd.DataFrame):
@@ -10,7 +11,9 @@ def test_clean_data(pt_life_expectancy_expected: pd.DataFrame,
         pt_life_expectancy_raw
         )
     
-    pt_life_expectancy_actual = lifeExpectancyOperations.filter_region(country_code="PT")
+    region = Region["PT"]
+    
+    pt_life_expectancy_actual = lifeExpectancyOperations.filter_region(country_code=region)
 
     pd.testing.assert_frame_equal(
         pt_life_expectancy_actual, pt_life_expectancy_expected
