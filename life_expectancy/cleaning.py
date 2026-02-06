@@ -6,6 +6,7 @@
 
 from numpy import nan
 from pandas import DataFrame, melt
+from life_expectancy.countries import Region
 
 
 class LifeExpectancyOperations():
@@ -62,8 +63,8 @@ class LifeExpectancyOperations():
 
         return df_unpivot
     
-    def filter_region(self, country_code: str = 'PT') -> DataFrame:
-        self.filtered_df = self.clean_df[self.clean_df['region'] == country_code.upper()]
+    def filter_region(self, country_code: Region = Region.PT) -> DataFrame:
+        self.filtered_df = self.clean_df[self.clean_df['region'] == country_code.name]
 
         self.filtered_df = self.filtered_df.reset_index(drop=True)
 

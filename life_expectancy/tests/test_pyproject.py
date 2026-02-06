@@ -21,10 +21,13 @@ from pkg_resources import DistributionNotFound, get_distribution
 from life_expectancy.data_io import OUTPUT_FILE_PATH, write_data, load_data
 from life_expectancy.full_orchestration import life_expectancy_orchestration
 from life_expectancy.cleaning import LifeExpectancyOperations
+from life_expectancy.countries import Region
+
 
 from . import PROJECT_DIR
 
 # pylint: disable=redefined-outer-name
+
 
 def test_dependencies():
     """Test that the get_versions function return 4 values."""
@@ -71,6 +74,12 @@ def test_package():
         "is `0.1.0`."
     )
 
+def test_fetch_valid_countries():
+    country_code = Region['DK']
+
+    valid_countries = country_code.fetch_valid_countries()
+
+    assert all(len(x.name) <= 2 for x in valid_countries)
 
 @patch("life_expectancy.data_io.read_csv")
 def test_load_data(mock_read_csv: mock):
@@ -102,21 +111,25 @@ def test_life_expectancy_orchestration(mock_load_data, mock_life_exp_ops):
     mock_load_data.return_value = mock_df_raw
     mock_instance = mock_life_exp_ops.return_value
     mock_instance.filter_region.return_value = mock_df_filtered
-
+    
+    region = Region["PT"]
+    
     result = life_expectancy_orchestration(
-        country_code="PT", input_file_path=input_file_path
+        country_code=region, input_file_path=input_file_path
     )
 
     mock_load_data.assert_called_once_with(input_file_path)
     mock_life_exp_ops.assert_called_once_with(raw_df=mock_df_raw)
-    mock_instance.filter_region.assert_called_once_with(country_code="PT")
+    mock_instance.filter_region.assert_called_once_with(region)
     assert result.equals(mock_df_filtered)
 
 
 def test_clean_and_filter_region(raw_df, expected_filtered_df):
     lifeExpectancyOperations = LifeExpectancyOperations(raw_df)
 
-    df_filtered = lifeExpectancyOperations.filter_region(country_code="PT")
+    region = Region["PT"]
+
+    df_filtered = lifeExpectancyOperations.filter_region(country_code=region)
 
     pd.testing.assert_frame_equal(df_filtered, expected_filtered_df)
 
@@ -125,8 +138,10 @@ def test_clean_and_filter_region(raw_df, expected_filtered_df):
 def test_filter_region_unit(mock_clean_data, expected_cleaned_df, expected_filtered_df):
     mock_clean_data.return_value = expected_cleaned_df
 
+    region = Region["PT"]
+
     ops = LifeExpectancyOperations(pd.DataFrame())
-    result = ops.filter_region(country_code="PT")
+    result = ops.filter_region(country_code=region)
 
     pd.testing.assert_frame_equal(result, expected_filtered_df)
 

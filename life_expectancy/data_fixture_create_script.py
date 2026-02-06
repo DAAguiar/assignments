@@ -1,8 +1,9 @@
+from cleaning import LifeExpectancyOperations
 from pandas import read_csv
 
 # pylint: disable-all
 
-if __name__ == "__main__":
+def make_fixture() -> None:
     df = read_csv(
         "./life_expectancy/data/eu_life_expectancy_raw.tsv", sep="\t", header=0
     )
@@ -15,3 +16,14 @@ if __name__ == "__main__":
         sep="\t",
         index=False,
     )
+
+if __name__ == "__main__":
+    df = read_csv(
+        "./life_expectancy/data/eu_life_expectancy_raw.tsv", sep="\t", header=0
+    )
+
+    cleaningOperations = LifeExpectancyOperations(df)
+
+    cleaned_df = cleaningOperations.clean_df
+
+    print(cleaned_df[["region"]].drop_duplicates())
